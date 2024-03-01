@@ -14,10 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class VehiculoService implements IVehiculoService {
@@ -59,6 +57,22 @@ public class VehiculoService implements IVehiculoService {
         return modelMapper.map(vehiculoGuardado, VehiculoDetalleSalidaDto.class);
     }
 
+    @Override
+    public List<VehiculoSalidaDto> listarVehiculos() {
+        List<Vehiculo> vehiculos = vehiculoRepository.findAll();
+        return vehiculos.stream()
+                .map(this::entidadAdtoSalida)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void eliminarVehiculo(Long id) {
+        // Verificar si el vehículo existe antes de intentar eliminarlo
+        if (!vehiculoRepository.existsById(id)) {
+            throw new NoSuchElementException("No se encontró un vehículo con el ID especificado");
+        }
+        vehiculoRepository.deleteById(id);
+    }
 
     private void configureMapping() {
         modelMapper.typeMap(VehiculoEntradaDto.class, Vehiculo.class)

@@ -24,6 +24,9 @@ public interface IVehiculoService {
 
     //___________________________________________________________________________________________
     VehiculoDetalleSalidaDto obtenerDetalleVehiculo(Long id) throws ResourceNotFoundException;
+
+    List<VehiculoSalidaDto> listarVehiculos();
+    void eliminarVehiculo(Long id);
 }
 
 

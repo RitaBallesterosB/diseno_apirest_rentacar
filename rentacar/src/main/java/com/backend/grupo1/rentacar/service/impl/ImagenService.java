@@ -11,6 +11,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class ImagenService  implements ImpImagenService {
     private final Logger LOGGER= LoggerFactory.getLogger(ImagenService.class);
@@ -30,6 +34,25 @@ public class ImagenService  implements ImpImagenService {
         LOGGER.info ("Imagen agregada: {}", imagenSalidaDto);
 
         return  imagenSalidaDto;
+    }
+
+    @Override
+    public List<ImagenSalidaDto> listarGaleriaImagenes() {
+        List<Imagen> imagenes = imagenRepository.findAll();
+
+        // Mezcla las imágenes aleatoriamente
+        Collections.shuffle(imagenes);
+
+        // Obtiene un número aleatorio de imágenes entre 0 y el tamaño de la lista
+        int numImagenes = Math.min(imagenes.size(), 10); // Cambia 10 al número máximo deseado
+        List<Imagen> imagenesAleatorias = imagenes.stream()
+                .limit(numImagenes)
+                .collect(Collectors.toList());
+
+        // Convierte las imágenes en objetos ImagenSalidaDto
+        return imagenesAleatorias.stream()
+                .map(this::entidadADtoSalida)
+                .collect(Collectors.toList());
     }
     private void configureMapping() {
         modelMapper.typeMap(ImagenEntradaDto.class, Imagen.class);
